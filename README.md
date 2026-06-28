@@ -26,7 +26,7 @@
 
 ### 1. Clone & configure
 ```bash
-git clone https://github.com/yourorg/altrx.git
+git clone https://github.com/hiteshjha24/altrx.git
 cd altrx
 cp .env.example .env   # edit DATABASE_URL, CORS_ORIGINS if needed
 ```
@@ -157,14 +157,6 @@ The UI uses a dark Soft Neo-Brutalism aesthetic:
 
 ---
 
-## 🛡️ Safety & Legal
-
-- All content is **informational only** — not medical advice
-- A persistent legal disclaimer appears on every page
-- Safety warnings pulled from the `salts.safety_warnings_json` field cover pregnancy, alcohol, driving, liver, kidneys, and breastfeeding
-- Prescription medicines are clearly flagged with `prescription_required: true`
-
----
 
 ## 📊 Adding More Medicines
 
