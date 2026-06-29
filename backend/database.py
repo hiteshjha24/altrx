@@ -12,7 +12,7 @@ class Database:
     async def connect(self):
         dsn = os.getenv(
             "DATABASE_URL",
-            "postgresql://altrx_user:altrx_pass@localhost:5432/altrx_db",
+            "postgresql://postgres:Hitesh%4069@localhost:5432/altrx_db",
         )
         self.pool = await asyncpg.create_pool(
             dsn,

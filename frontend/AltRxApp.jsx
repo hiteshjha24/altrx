@@ -1,4 +1,24 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  Baby,
+  Car,
+  Check,
+  Dna,
+  Droplets,
+  FlaskConical,
+  Lightbulb,
+  Lock,
+  Search,
+  Shield,
+  Stethoscope,
+  TrendingDown,
+  Wine,
+  X,
+} from "lucide-react";
 
 const MOCK_MEDICINES = [
   { id:1, brand_name:"Crocin", manufacturer:"GSK Consumer", dosage_form:"Tablet", strength:"500mg", price:22.00, price_per_unit:1.4667, salt_name:"Paracetamol 500mg", is_generic:false, alternatives_count:5, match_score:1.0 },
@@ -138,8 +158,9 @@ function Navbar({ onHome }) {
         </span>
       </div>
       <div style={{display:"flex",gap:8,alignItems:"center"}}>
-        <span style={{fontSize:12,color:C.textSec,padding:"4px 10px",border:`1.5px solid ${C.border}`,borderRadius:6,background:C.bg}}>
-          🔒 Informational only
+        <span style={{fontSize:12,color:C.textSec,padding:"4px 10px",border:`1.5px solid ${C.border}`,borderRadius:6,background:C.bg, display:"inline-flex", alignItems:"center", gap:6}}>
+          <Lock size={14} color={C.textSec} strokeWidth={2} />
+          Informational only
         </span>
       </div>
     </nav>
@@ -179,12 +200,13 @@ function HomeView({ onSearch, onSelectSuggestion }) {
         background:`radial-gradient(ellipse 80% 50% at 50% 0%, ${C.teal}18, transparent)`,
       }}>
         <div style={{
-          display:"inline-block", padding:"4px 16px",
+          display:"inline-flex", alignItems:"center", gap:8, padding:"4px 16px",
           border:`2px solid ${C.teal}`, borderRadius:20,
           fontSize:13, fontWeight:700, color:C.teal, marginBottom:20,
           background:`${C.teal}15`,
         }}>
-          🧬 Same salt. Better price.
+          <Dna size={16} color={C.teal} strokeWidth={2} />
+          Same salt. Better price.
         </div>
 
         <h1 style={{
@@ -229,8 +251,10 @@ function HomeView({ onSearch, onSelectSuggestion }) {
                 ...btn(C.teal,"#fff",C.teal),
                 borderRadius:0, margin:0, boxShadow:"none",
                 padding:"18px 28px", fontSize:16,
+                display:"inline-flex", alignItems:"center", gap:8,
               }}>
-                Search →
+                Search
+                <ArrowRight size={18} strokeWidth={2} />
               </button>
             </div>
           </form>
@@ -292,10 +316,10 @@ function HomeView({ onSearch, onSelectSuggestion }) {
         </p>
         <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:20, maxWidth:860, margin:"0 auto"}}>
           {[
-            { step:"01", icon:"🔍", title:"Search", desc:"Enter the branded medicine name or active ingredient you were prescribed.", color:C.blue },
-            { step:"02", icon:"⚗️", title:"Match by Salt", desc:"We identify the exact chemical formulation and dosage, not just the brand.", color:C.teal },
-            { step:"03", icon:"💰", title:"Compare Prices", desc:"See all alternatives sorted cheapest-first with clear savings percentages.", color:C.green },
-            { step:"04", icon:"🛡️", title:"Stay Safe", desc:"Every result includes full safety data, side effects, and doctor consultation reminders.", color:C.amber },
+            { step:"01", icon: Search, title:"Search", desc:"Enter the branded medicine name or active ingredient you were prescribed.", color:C.blue },
+            { step:"02", icon: FlaskConical, title:"Match by Salt", desc:"We identify the exact chemical formulation and dosage, not just the brand.", color:C.teal },
+            { step:"03", icon: TrendingDown, title:"Compare Prices", desc:"See all alternatives sorted cheapest-first with clear savings percentages.", color:C.green },
+            { step:"04", icon: Shield, title:"Stay Safe", desc:"Every result includes full safety data, side effects, and doctor consultation reminders.", color:C.amber },
           ].map(step => (
             <div key={step.step} style={{...card, padding:24, position:"relative", overflow:"hidden"}}>
               <div style={{
@@ -303,7 +327,9 @@ function HomeView({ onSearch, onSelectSuggestion }) {
                 fontSize:64, fontWeight:900, color:`${step.color}18`, lineHeight:1,
                 pointerEvents:"none",
               }}>{step.step}</div>
-              <div style={{fontSize:32, marginBottom:12}}>{step.icon}</div>
+              <div style={{marginBottom:12}}>
+                <step.icon size={32} color={step.color} strokeWidth={2} />
+              </div>
               <div style={{fontSize:12, fontWeight:700, color:step.color, marginBottom:4}}>STEP {step.step}</div>
               <div style={{fontSize:17, fontWeight:800, marginBottom:8}}>{step.title}</div>
               <div style={{fontSize:14, color:C.textSec, lineHeight:1.6}}>{step.desc}</div>
@@ -354,7 +380,9 @@ function SearchResultsView({ query, onSelectMedicine }) {
 
       {results.length === 0 ? (
         <div style={{...card, padding:48, textAlign:"center"}}>
-          <div style={{fontSize:48, marginBottom:12}}>🔍</div>
+          <div style={{display:"flex", justifyContent:"center", marginBottom:12}}>
+            <Search size={48} color={C.textMut} strokeWidth={2} />
+          </div>
           <div style={{fontSize:18, fontWeight:700, marginBottom:8}}>No medicines found</div>
           <div style={{color:C.textSec}}>Try a different spelling or use the active ingredient name</div>
         </div>
@@ -377,8 +405,9 @@ function SearchResultsView({ query, onSelectMedicine }) {
                 </div>
                 <div style={{fontSize:18, fontWeight:800, marginBottom:2}}>{med.brand_name}</div>
                 <div style={{fontSize:13, color:C.textSec}}>{med.manufacturer} · {med.dosage_form} · {med.strength}</div>
-                <div style={{fontSize:12, color:C.textMut, marginTop:4}}>
-                  🧬 Active: <span style={{color:C.teal}}>{med.salt_name}</span>
+                <div style={{fontSize:12, color:C.textMut, marginTop:4, display:"flex", alignItems:"center", gap:6}}>
+                  <Dna size={14} color={C.textMut} strokeWidth={2} />
+                  Active: <span style={{color:C.teal}}>{med.salt_name}</span>
                 </div>
               </div>
               <div style={{display:"flex", flexDirection:"column", alignItems:"flex-end", gap:8}}>
@@ -387,8 +416,10 @@ function SearchResultsView({ query, onSelectMedicine }) {
                 <button onClick={e=>{e.stopPropagation();onSelectMedicine(med)}} style={{
                   ...btn(C.teal),
                   padding:"8px 16px", fontSize:13,
+                  display:"inline-flex", alignItems:"center", gap:6,
                 }}>
-                  {med.alternatives_count} alternatives →
+                  {med.alternatives_count} alternatives
+                  <ArrowRight size={14} strokeWidth={2} />
                 </button>
               </div>
             </div>
@@ -429,8 +460,11 @@ function AlternativesView({ medicine, onViewDetail }) {
       <div style={{marginBottom:24}}>
         <div style={{fontSize:13, color:C.textSec, marginBottom:4}}>Finding alternatives for</div>
         <h1 style={{fontSize:28, fontWeight:900, letterSpacing:-0.5}}>{data.target.brand_name}</h1>
-        <div style={{fontSize:14, color:C.textSec, display:"flex", gap:8, flexWrap:"wrap", marginTop:6}}>
-          <span>🧬 {data.target.salt_name}</span>
+        <div style={{fontSize:14, color:C.textSec, display:"flex", gap:8, flexWrap:"wrap", marginTop:6, alignItems:"center"}}>
+          <span style={{display:"inline-flex", alignItems:"center", gap:6}}>
+            <Dna size={14} color={C.teal} strokeWidth={2} />
+            {data.target.salt_name}
+          </span>
           <span>·</span>
           <span>{data.target.dosage_form}</span>
           <span>·</span>
@@ -454,7 +488,10 @@ function AlternativesView({ medicine, onViewDetail }) {
 
         {/* Savings calculator */}
         <div style={{...card, padding:24}}>
-          <div style={{fontSize:13, fontWeight:700, color:C.amber, marginBottom:12}}>💡 SAVINGS CALCULATOR</div>
+          <div style={{fontSize:13, fontWeight:700, color:C.amber, marginBottom:12, display:"flex", alignItems:"center", gap:8}}>
+            <Lightbulb size={16} color={C.amber} strokeWidth={2} />
+            SAVINGS CALCULATOR
+          </div>
           <div style={{fontSize:13, color:C.textSec, marginBottom:6}}>
             Tablets per day: <strong style={{color:C.text}}>{monthlySaving}</strong>
           </div>
@@ -545,9 +582,10 @@ function AlternativesView({ medicine, onViewDetail }) {
                   {alt.savings_percentage > 0 && (
                     <div style={{
                       fontSize:12, fontWeight:700, color:C.green,
-                      marginTop:4, display:"flex", alignItems:"center", gap:2, justifyContent:"flex-end",
+                      marginTop:4, display:"flex", alignItems:"center", gap:4, justifyContent:"flex-end",
                     }}>
-                      ↓ {alt.savings_percentage}% cheaper
+                      <TrendingDown size={14} color={C.green} strokeWidth={2} />
+                      {alt.savings_percentage}% cheaper
                     </div>
                   )}
                 </div>
@@ -569,12 +607,12 @@ function MedicineDetailView({ medicine }) {
 
   const warnings = detail.safety_warnings || {};
   const warningItems = [
-    { key:"pregnancy",  icon:"🤰", label:"Pregnancy",    color:C.blue },
-    { key:"alcohol",    icon:"🍺", label:"Alcohol",      color:C.red },
-    { key:"driving",    icon:"🚗", label:"Driving",      color:C.amber },
-    { key:"liver",      icon:"🫁", label:"Liver",        color:C.red },
-    { key:"breastfeed", icon:"👶", label:"Breastfeeding",color:C.blue },
-    { key:"kidneys",    icon:"🫘", label:"Kidneys",      color:C.amber },
+    { key:"pregnancy",  icon: Baby,       label:"Pregnancy",     color:C.blue },
+    { key:"alcohol",    icon: Wine,       label:"Alcohol",       color:C.red },
+    { key:"driving",    icon: Car,        label:"Driving",       color:C.amber },
+    { key:"liver",      icon: Activity,   label:"Liver",         color:C.red },
+    { key:"breastfeed", icon: Baby,       label:"Breastfeeding", color:C.blue },
+    { key:"kidneys",    icon: Droplets,   label:"Kidneys",       color:C.amber },
   ].filter(w => warnings[w.key]);
 
   return (
@@ -611,7 +649,10 @@ function MedicineDetailView({ medicine }) {
 
       {/* Active Salt */}
       <div style={{...card, padding:24, marginBottom:20}}>
-        <div style={{fontSize:13, fontWeight:700, color:C.teal, marginBottom:12}}>🧬 ACTIVE SALT COMPOSITION</div>
+        <div style={{fontSize:13, fontWeight:700, color:C.teal, marginBottom:12, display:"flex", alignItems:"center", gap:8}}>
+          <Dna size={16} color={C.teal} strokeWidth={2} />
+          ACTIVE SALT COMPOSITION
+        </div>
         <div style={{fontSize:20, fontWeight:800, marginBottom:4}}>{detail.salt_name}</div>
         {detail.iupac_name && <div style={{fontSize:12, color:C.textMut, marginBottom:12, fontFamily:"monospace"}}>{detail.iupac_name}</div>}
         <div style={{fontSize:14, color:C.textSec, lineHeight:1.7, marginBottom:12}}>{detail.mechanism}</div>
@@ -626,7 +667,10 @@ function MedicineDetailView({ medicine }) {
       {/* Side effects */}
       {(detail.side_effects||[]).length > 0 && (
         <div style={{...card, padding:24, marginBottom:20}}>
-          <div style={{fontSize:13, fontWeight:700, color:C.amber, marginBottom:12}}>⚠️ SIDE EFFECTS</div>
+          <div style={{fontSize:13, fontWeight:700, color:C.amber, marginBottom:12, display:"flex", alignItems:"center", gap:8}}>
+            <AlertTriangle size={16} color={C.amber} strokeWidth={2} />
+            SIDE EFFECTS
+          </div>
           <div style={{display:"flex", flexWrap:"wrap", gap:8}}>
             {detail.side_effects.map(e=>(
               <span key={e} className="tag" style={{background:`${C.amber}18`, color:C.amber, borderColor:C.amber}}>{e}</span>
@@ -638,7 +682,10 @@ function MedicineDetailView({ medicine }) {
       {/* Safety warnings */}
       {warningItems.length > 0 && (
         <div style={{...card, padding:24, marginBottom:20}}>
-          <div style={{fontSize:13, fontWeight:700, color:C.red, marginBottom:16}}>🛡️ SAFETY INFORMATION</div>
+          <div style={{fontSize:13, fontWeight:700, color:C.red, marginBottom:16, display:"flex", alignItems:"center", gap:8}}>
+            <Shield size={16} color={C.red} strokeWidth={2} />
+            SAFETY INFORMATION
+          </div>
           <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:12}}>
             {warningItems.map(w => {
               const info = warnings[w.key];
@@ -650,13 +697,20 @@ function MedicineDetailView({ medicine }) {
                   borderRadius:10, padding:16,
                 }}>
                   <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:6}}>
-                    <span style={{fontSize:20}}>{w.icon}</span>
+                    <w.icon size={20} color={w.color} strokeWidth={2} />
                     <span style={{fontWeight:700, fontSize:13, color}}>{w.label}</span>
                     <span style={{
                       marginLeft:"auto", fontSize:11, fontWeight:700,
                       color, background:`${color}25`, padding:"2px 8px", borderRadius:20,
+                      display:"inline-flex", alignItems:"center", gap:4,
                     }}>
-                      {safe===true?"✓ Safe":safe===false?"✗ Caution":"⚠ Ask Doctor"}
+                      {safe===true ? (
+                        <><Check size={12} strokeWidth={3} /> Safe</>
+                      ) : safe===false ? (
+                        <><X size={12} strokeWidth={3} /> Caution</>
+                      ) : (
+                        <><AlertTriangle size={12} strokeWidth={2} /> Ask Doctor</>
+                      )}
                     </span>
                   </div>
                   <div style={{fontSize:12, color:C.textSec, lineHeight:1.5}}>{info?.note}</div>
@@ -692,8 +746,9 @@ function DisclaimerFooter() {
       background:"#100000", border:`2px solid ${C.red}66`,
       borderRadius:12, textAlign:"center",
     }}>
-      <div style={{fontSize:13, fontWeight:800, color:C.red, marginBottom:6}}>
-        ⚕️ IMPORTANT MEDICAL DISCLAIMER
+      <div style={{fontSize:13, fontWeight:800, color:C.red, marginBottom:6, display:"flex", alignItems:"center", justifyContent:"center", gap:8}}>
+        <Stethoscope size={16} color={C.red} strokeWidth={2} />
+        IMPORTANT MEDICAL DISCLAIMER
       </div>
       <p style={{fontSize:12, color:C.textSec, maxWidth:760, margin:"0 auto", lineHeight:1.6}}>
         AltRx is a <strong style={{color:C.text}}>purely informational platform</strong>. The information provided does not constitute medical advice and is not a substitute for professional medical consultation, diagnosis, or treatment. Always consult a qualified doctor or pharmacist before switching or stopping any medication. Do not self-medicate. Medicine availability, pricing, and safety profiles may vary. AltRx does not sell medicines or endorse any brand.
@@ -728,7 +783,10 @@ export default function AltRxApp() {
         {view === "alternatives" && selectedMed && (
           <>
             <div style={{padding:"12px 24px", background:C.surface, borderBottom:`1px solid ${C.border}`, display:"flex", gap:8}}>
-              <button onClick={()=>setView("results")} style={{...btn("transparent",C.textSec,C.border), padding:"6px 14px", boxShadow:"none", fontSize:13}}>← Back to results</button>
+              <button onClick={()=>setView("results")} style={{...btn("transparent",C.textSec,C.border), padding:"6px 14px", boxShadow:"none", fontSize:13, display:"inline-flex", alignItems:"center", gap:6}}>
+                <ArrowLeft size={14} strokeWidth={2} />
+                Back to results
+              </button>
               <span style={{fontSize:13, color:C.textMut, alignSelf:"center"}}>/ {selectedMed.brand_name} alternatives</span>
             </div>
             <AlternativesView medicine={selectedMed} onViewDetail={viewDetail} />
@@ -737,7 +795,10 @@ export default function AltRxApp() {
         {view === "detail" && detailMed && (
           <>
             <div style={{padding:"12px 24px", background:C.surface, borderBottom:`1px solid ${C.border}`, display:"flex", gap:8}}>
-              <button onClick={()=>setView("alternatives")} style={{...btn("transparent",C.textSec,C.border), padding:"6px 14px", boxShadow:"none", fontSize:13}}>← Back to alternatives</button>
+              <button onClick={()=>setView("alternatives")} style={{...btn("transparent",C.textSec,C.border), padding:"6px 14px", boxShadow:"none", fontSize:13, display:"inline-flex", alignItems:"center", gap:6}}>
+                <ArrowLeft size={14} strokeWidth={2} />
+                Back to alternatives
+              </button>
             </div>
             <MedicineDetailView medicine={detailMed} />
           </>

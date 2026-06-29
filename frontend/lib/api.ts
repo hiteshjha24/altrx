@@ -105,7 +105,8 @@ export const api = {
   getAlternatives: (id: number, form?: string): Promise<AlternativeResponse> => {
     const params = new URLSearchParams();
     if (form) params.set("form", form);
-    return apiFetch<AlternativeResponse>(`/api/medicines/${id}/alternatives?${params}`),
+    return apiFetch<AlternativeResponse>(`/api/medicines/${id}/alternatives?${params}`);
+  },
 
   getPopular: (): Promise<{ suggestions: string[] }> =>
     apiFetch<{ suggestions: string[] }>(`/api/popular`),

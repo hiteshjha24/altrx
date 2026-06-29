@@ -1,6 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import {
+  type LucideIcon,
+  ArrowRight,
+  AtSign,
+  Banknote,
+  BarChart3,
+  Camera,
+  Check,
+  CloudUpload,
+  Dna,
+  Heart,
+  HeartPulse,
+  IndianRupee,
+  Lock,
+  MapPin,
+  Package,
+  Phone,
+  Pill,
+  Search,
+  Share2,
+  Shield,
+  ShieldCheck,
+  ShoppingCart,
+  Star,
+  Stethoscope,
+  Thermometer,
+  TrendingUp,
+  Truck,
+  Upload,
+  Users,
+  Wind,
+  Zap,
+} from "lucide-react";
+import { Dela_Gothic_One } from "next/font/google";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,7 +100,7 @@ export default function Home() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-            <span style={{ fontSize: 20 }}>📍</span>
+            <MapPin size={20} color={colors.lightGray} strokeWidth={2} />
             <div style={{ fontSize: 13 }}>
               <div style={{ color: colors.lightGray, fontSize: 11 }}>Deliver to</div>
               <div>New Delhi</div>
@@ -75,7 +109,10 @@ export default function Home() {
           <button style={{ background: "transparent", border: "none", color: colors.lightGray, cursor: "pointer", fontSize: 14 }}>
             Login / Sign Up
           </button>
-          <div style={{ cursor: "pointer" }}>🛒 0</div>
+          <div style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+            <ShoppingCart size={20} color={colors.lightGray} strokeWidth={2} />
+            <span>0</span>
+          </div>
         </div>
       </nav>
 
@@ -95,11 +132,18 @@ export default function Home() {
         <div>
           <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.2, marginBottom: 20, color: colors.white }}>
             Your Prescription,
-            <span style={{ color: colors.brightBlue }}> Our Priority.</span>
+            <br></br>
+            <span style={{ 
+              background: 'linear-gradient(45deg, #00C6FF, #0be34c)',
+              WebkitBackgroundClip : "text",
+              WebkitTextFillColor: "transparent",
+            }}> Our Priority.</span>
           </h1>
 
           <p style={{ fontSize: 16, color: colors.lightGray, marginBottom: 40, lineHeight: 1.6 }}>
-            Upload your prescription, get alternate medicines with same benefits and order with fast delivery.
+            Upload your prescription, get alternate medicines with 
+            <br></br>
+            same benefits and order with fast delivery.
           </p>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 40 }}>
@@ -113,7 +157,9 @@ export default function Home() {
                 cursor: "pointer",
               }}
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>📤</div>
+              <div style={{ marginBottom: 12 }}>
+                <CloudUpload size={48} color={colors.emeraldGreen} strokeWidth={2} />
+            </div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: colors.white }}>Upload Prescription</div>
               <div style={{ fontSize: 13, color: colors.lightGray, marginBottom: 12 }}>Upload a clear image of your prescription</div>
               <button
@@ -175,7 +221,7 @@ export default function Home() {
                     fontSize: 18,
                   }}
                 >
-                  🔍
+                  <Search size={18} color={colors.white} strokeWidth={2} />
                 </button>
               </form>
             </div>
@@ -183,13 +229,15 @@ export default function Home() {
 
           {/* Features */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-            {[
-              { icon: "✓", label: "100% Genuine Medicines" },
-              { icon: "🔒", label: "Secure & Private" },
-              { icon: "⚡", label: "Fast Delivery in 30-60 mins" },
-            ].map((feature) => (
+            {(
+              [
+                { icon: Check, label: "100% Genuine Medicines" },
+                { icon: Lock, label: "Secure & Private" },
+                { icon: Zap, label: "Fast Delivery in 30-60 mins" },
+              ] as { icon: LucideIcon; label: string }[]
+            ).map((feature) => (
               <div key={feature.label} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <span style={{ fontSize: 20, color: colors.emeraldGreen }}>{feature.icon}</span>
+                <feature.icon size={20} color={colors.emeraldGreen} strokeWidth={2} />
                 <span style={{ fontSize: 13, color: colors.lightGray }}>{feature.label}</span>
               </div>
             ))}
@@ -270,12 +318,14 @@ export default function Home() {
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
-            {[
-              { num: "01", icon: "📤", title: "Upload Prescription", desc: "Upload and we'll review your prescription" },
-              { num: "02", icon: "✓", title: "Get Alternatives", desc: "We suggest alternate medicines with same benefits" },
-              { num: "03", icon: "🛒", title: "Add to Cart", desc: "Add medicines to cart and place your order" },
-              { num: "04", icon: "🚚", title: "Fast Delivery", desc: "Get your medicines delivered in 30-60 mins" },
-            ].map((step) => (
+            {(
+              [
+                { num: "01", icon: Upload, title: "Upload Prescription", desc: "Upload and we'll review your prescription" },
+                { num: "02", icon: Check, title: "Get Alternatives", desc: "We suggest alternate medicines with same benefits" },
+                { num: "03", icon: ShoppingCart, title: "Add to Cart", desc: "Add medicines to cart and place your order" },
+                { num: "04", icon: Truck, title: "Fast Delivery", desc: "Get your medicines delivered in 30-60 mins" },
+              ] as { num: string; icon: LucideIcon; title: string; desc: string }[]
+            ).map((step) => (
               <div
                 key={step.num}
                 style={{
@@ -286,8 +336,10 @@ export default function Home() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{step.icon}</div>
-                <div style={{ fontSize: 11, color: colors.brightBlue, fontWeight: 700, marginBottom: 8 }}>STEP {step.num}</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                  <step.icon size={32} color={colors.emeraldGreen} strokeWidth={2} />
+                </div>
+                <div style={{ fontSize: 11, color: colors.emeraldGreen, fontWeight: 700, marginBottom: 8 }}>STEP {step.num}</div>
                 <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: colors.white }}>{step.title}</div>
                 <div style={{ fontSize: 13, color: colors.lightGray }}>{step.desc}</div>
               </div>
@@ -302,13 +354,15 @@ export default function Home() {
           <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, textAlign: "center", color: colors.white }}>Why Choose AltRx?</h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
-            {[
-              { icon: "🛡️", title: "Why Choose AltRx?", desc: "We make healthcare simple, accessible and affordable for everyone." },
-              { icon: "👥", title: "Same Benefits", desc: "Alternate medicines with same composition" },
-              { icon: "💰", title: "Affordable Prices", desc: "Best prices on all medicines" },
-              { icon: "👨‍⚕️", title: "Trusted by Doctors", desc: "Partnered with verified pharmacies" },
-              { icon: "📞", title: "24/7 Support", desc: "We're here to help you anytime" },
-            ].map((item, idx) => (
+            {(
+              [
+                { icon: Shield, title: "Why Choose AltRx?", desc: "We make healthcare simple, accessible and affordable for everyone." },
+                { icon: Users, title: "Same Benefits", desc: "Alternate medicines with same composition" },
+                { icon: IndianRupee, title: "Affordable Prices", desc: "Best prices on all medicines" },
+                { icon: Stethoscope, title: "Trusted by Doctors", desc: "Partnered with verified pharmacies" },
+                { icon: Phone, title: "24/7 Support", desc: "We're here to help you anytime" },
+              ] as { icon: LucideIcon; title: string; desc: string }[]
+            ).map((item, idx) => (
               <div
                 key={idx}
                 style={{
@@ -319,7 +373,9 @@ export default function Home() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: 32, marginBottom: 12 }}>{item.icon}</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                  <item.icon size={32} color={colors.brightBlue} strokeWidth={2} />
+                </div>
                 <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: colors.white }}>{item.title}</div>
                 <div style={{ fontSize: 13, color: colors.lightGray, lineHeight: 1.5 }}>{item.desc}</div>
               </div>
@@ -335,14 +391,16 @@ export default function Home() {
           <p style={{ fontSize: 14, color: colors.lightGray, marginBottom: 40 }}>Find affordable alternatives for these popular medicine categories</p>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 16 }}>
-            {[
-              { icon: "💊", name: "Pain Relief", count: "45+ alternatives" },
-              { icon: "🤒", name: "Cold & Fever", count: "38+ alternatives" },
-              { icon: "🫁", name: "Cough & Cold", count: "52+ alternatives" },
-              { icon: "💓", name: "Heart Care", count: "29+ alternatives" },
-              { icon: "🩺", name: "Blood Pressure", count: "41+ alternatives" },
-              { icon: "🧬", name: "Vitamins", count: "56+ alternatives" },
-            ].map((cat) => (
+            {(
+              [
+                { icon: Pill, name: "Pain Relief", count: "45+ alternatives" },
+                { icon: Thermometer, name: "Cold & Fever", count: "38+ alternatives" },
+                { icon: Wind, name: "Cough & Cold", count: "52+ alternatives" },
+                { icon: Heart, name: "Heart Care", count: "29+ alternatives" },
+                { icon: HeartPulse, name: "Blood Pressure", count: "41+ alternatives" },
+                { icon: Dna, name: "Vitamins", count: "56+ alternatives" },
+              ] as { icon: LucideIcon; name: string; count: string }[]
+            ).map((cat) => (
               <div
                 key={cat.name}
                 style={{
@@ -355,7 +413,9 @@ export default function Home() {
                   transition: "all 0.3s",
                 }}
               >
-                <div style={{ fontSize: 36, marginBottom: 12 }}>{cat.icon}</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                  <cat.icon size={36} color={colors.brightBlue} strokeWidth={2} />
+                </div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: colors.white, marginBottom: 4 }}>{cat.name}</div>
                 <div style={{ fontSize: 12, color: colors.brightBlue }}>{cat.count}</div>
               </div>
@@ -430,9 +490,15 @@ export default function Home() {
                   </div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, color: colors.lightGray, marginBottom: 8 }}>💰 Original Price</div>
+                  <div style={{ fontSize: 12, color: colors.lightGray, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                    <Banknote size={14} color={colors.lightGray} strokeWidth={2} />
+                    Original Price
+                  </div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: colors.brightBlue, marginBottom: 12 }}>{med.price}</div>
-                  <div style={{ fontSize: 12, color: colors.lightGray, marginBottom: 8 }}>✓ Cheapest Alternative</div>
+                  <div style={{ fontSize: 12, color: colors.lightGray, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                    <Check size={14} color={colors.emeraldGreen} strokeWidth={2} />
+                    Cheapest Alternative
+                  </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: colors.white }}>{med.alt}</div>
                 </div>
                 <button style={{
@@ -445,7 +511,10 @@ export default function Home() {
                   fontWeight: 700,
                   cursor: "pointer",
                 }}>
-                  View Alternatives →
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    View Alternatives
+                    <ArrowRight size={16} strokeWidth={2} />
+                  </span>
                 </button>
               </div>
             ))}
@@ -461,32 +530,55 @@ export default function Home() {
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }}>
-            {[
-              { 
-                step: "01",
-                title: "Upload or Search",
-                desc: "Upload your prescription image or search for any medicine by name. Our system instantly identifies the active ingredients.",
-                points: ["📸 Clear prescription photos", "🔍 Smart search engine", "⚡ Instant recognition"]
-              },
-              { 
-                step: "02",
-                title: "Find Alternatives",
-                desc: "Get a curated list of generic and branded alternatives with the same active ingredient composition.",
-                points: ["✓ Same benefits guaranteed", "🧬 Identical salt composition", "📊 Side-by-side comparison"]
-              },
-              { 
-                step: "03",
-                title: "Compare & Save",
-                desc: "Compare prices, effectiveness, and user reviews. See exactly how much you'll save per month and year.",
-                points: ["💰 Up to 80% savings", "📈 Monthly savings calculator", "⭐ Verified reviews"]
-              },
-              { 
-                step: "04",
-                title: "Order & Deliver",
-                desc: "Add to cart and order. We partner with verified pharmacies for fastest and safest delivery.",
-                points: ["🚚 30-60 mins delivery", "🔐 100% authentic", "📦 Discreet packaging"]
-              },
-            ].map((item) => (
+            {(
+              [
+                {
+                  step: "01",
+                  title: "Upload or Search",
+                  desc: "Upload your prescription image or search for any medicine by name. Our system instantly identifies the active ingredients.",
+                  points: [
+                    { icon: Camera, text: "Clear prescription photos" },
+                    { icon: Search, text: "Smart search engine" },
+                    { icon: Zap, text: "Instant recognition" },
+                  ],
+                },
+                {
+                  step: "02",
+                  title: "Find Alternatives",
+                  desc: "Get a curated list of generic and branded alternatives with the same active ingredient composition.",
+                  points: [
+                    { icon: Check, text: "Same benefits guaranteed" },
+                    { icon: Dna, text: "Identical salt composition" },
+                    { icon: BarChart3, text: "Side-by-side comparison" },
+                  ],
+                },
+                {
+                  step: "03",
+                  title: "Compare & Save",
+                  desc: "Compare prices, effectiveness, and user reviews. See exactly how much you'll save per month and year.",
+                  points: [
+                    { icon: IndianRupee, text: "Up to 80% savings" },
+                    { icon: TrendingUp, text: "Monthly savings calculator" },
+                    { icon: Star, text: "Verified reviews" },
+                  ],
+                },
+                {
+                  step: "04",
+                  title: "Order & Deliver",
+                  desc: "Add to cart and order. We partner with verified pharmacies for fastest and safest delivery.",
+                  points: [
+                    { icon: Truck, text: "30-60 mins delivery" },
+                    { icon: ShieldCheck, text: "100% authentic" },
+                    { icon: Package, text: "Discreet packaging" },
+                  ],
+                },
+              ] as {
+                step: string;
+                title: string;
+                desc: string;
+                points: { icon: LucideIcon; text: string }[];
+              }[]
+            ).map((item) => (
               <div
                 key={item.step}
                 style={{
@@ -519,9 +611,9 @@ export default function Home() {
                 <p style={{ fontSize: 14, color: colors.lightGray, lineHeight: 1.6, marginBottom: 16 }}>{item.desc}</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {item.points.map((point) => (
-                    <div key={point} style={{ fontSize: 13, color: colors.lightGray, display: "flex", gap: 8 }}>
-                      <span style={{ color: colors.emeraldGreen }}>{point.split(" ")[0]}</span>
-                      <span>{point.split(" ").slice(1).join(" ")}</span>
+                    <div key={point.text} style={{ fontSize: 13, color: colors.lightGray, display: "flex", gap: 8, alignItems: "center" }}>
+                      <point.icon size={16} color={colors.emeraldGreen} strokeWidth={2} />
+                      <span>{point.text}</span>
                     </div>
                   ))}
                 </div>
@@ -539,38 +631,40 @@ export default function Home() {
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-            {[
-              { 
-                icon: "🛡️",
-                title: "100% Authentic Medicines",
-                desc: "Every medicine is sourced from verified pharmacies and manufacturers. Direct partnerships ensure authenticity.",
-              },
-              { 
-                icon: "💰",
-                title: "Massive Savings",
-                desc: "Save up to 80% by switching to generic alternatives. Same active ingredients, fraction of the cost.",
-              },
-              { 
-                icon: "⚡",
-                title: "Lightning Fast Delivery",
-                desc: "Orders delivered in 30-60 minutes across major Indian cities. Track your order in real-time.",
-              },
-              { 
-                icon: "👨‍⚕️",
-                title: "Doctor Recommended",
-                desc: "Endorsed by healthcare professionals. All suggestions are medically verified and safe.",
-              },
-              { 
-                icon: "🔒",
-                title: "Privacy Protected",
-                desc: "Your prescription and medical data are encrypted and never shared. Complete confidentiality guaranteed.",
-              },
-              { 
-                icon: "📞",
-                title: "24/7 Customer Support",
-                desc: "Expert pharmacists available round the clock. Chat, call, or email anytime for help.",
-              },
-            ].map((item) => (
+            {(
+              [
+                {
+                  icon: Shield,
+                  title: "100% Authentic Medicines",
+                  desc: "Every medicine is sourced from verified pharmacies and manufacturers. Direct partnerships ensure authenticity.",
+                },
+                {
+                  icon: IndianRupee,
+                  title: "Massive Savings",
+                  desc: "Save up to 80% by switching to generic alternatives. Same active ingredients, fraction of the cost.",
+                },
+                {
+                  icon: Zap,
+                  title: "Lightning Fast Delivery",
+                  desc: "Orders delivered in 30-60 minutes across major Indian cities. Track your order in real-time.",
+                },
+                {
+                  icon: Stethoscope,
+                  title: "Doctor Recommended",
+                  desc: "Endorsed by healthcare professionals. All suggestions are medically verified and safe.",
+                },
+                {
+                  icon: Lock,
+                  title: "Privacy Protected",
+                  desc: "Your prescription and medical data are encrypted and never shared. Complete confidentiality guaranteed.",
+                },
+                {
+                  icon: Phone,
+                  title: "24/7 Customer Support",
+                  desc: "Expert pharmacists available round the clock. Chat, call, or email anytime for help.",
+                },
+              ] as { icon: LucideIcon; title: string; desc: string }[]
+            ).map((item) => (
               <div
                 key={item.title}
                 style={{
@@ -581,7 +675,9 @@ export default function Home() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: 40, marginBottom: 12 }}>{item.icon}</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+                  <item.icon size={40} color={colors.brightBlue} strokeWidth={2} />
+                </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: colors.white, marginBottom: 8 }}>{item.title}</div>
                 <div style={{ fontSize: 13, color: colors.lightGray, lineHeight: 1.6 }}>{item.desc}</div>
               </div>
@@ -612,9 +708,9 @@ export default function Home() {
                   background: colors.black,
                 }}
               >
-                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
                   {[...Array(review.rating)].map((_, i) => (
-                    <span key={i} style={{ fontSize: 16 }}>⭐</span>
+                    <Star key={i} size={16} color="#F59E0B" fill="#F59E0B" strokeWidth={2} />
                   ))}
                 </div>
                 <p style={{ fontSize: 13, color: colors.lightGray, lineHeight: 1.6, marginBottom: 16 }}>"{review.testimonial}"</p>
@@ -697,15 +793,27 @@ export default function Home() {
             <div>
               <h4 style={{ color: colors.white, fontWeight: 700, marginBottom: 16 }}>Follow Us</h4>
               <ul style={{ listStyle: "none", padding: 0 }}>
-                <li style={{ marginBottom: 8 }}>📘 Facebook</li>
-                <li style={{ marginBottom: 8 }}>𝕏 Twitter</li>
-                <li>📷 Instagram</li>
+                <li style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  <Share2 size={16} color={colors.lightGray} strokeWidth={2} />
+                  Facebook
+                </li>
+                <li style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+                  <AtSign size={16} color={colors.lightGray} strokeWidth={2} />
+                  Twitter
+                </li>
+                <li style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Camera size={16} color={colors.lightGray} strokeWidth={2} />
+                  Instagram
+                </li>
               </ul>
             </div>
           </div>
         </div>
         <div style={{ paddingTop: 24, borderTop: `1px solid ${colors.darkGray}` }}>
-          <p>© 2024 AltRx. All rights reserved. | Made with ❤️ for your health</p>
+          <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
+            © 2024 AltRx. All rights reserved. | Made with{" "}
+            <Heart size={14} color="#EF4444" fill="#EF4444" strokeWidth={2} /> for your health
+          </p>
           <p style={{ marginTop: 8, fontSize: 12 }}>Consult a qualified doctor before switching medicines.</p>
         </div>
       </footer>
