@@ -76,18 +76,17 @@ export default function Home() {
           backdropFilter: "blur(10px)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 24, fontWeight: 900 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 34, fontWeight: 900 }}>
             <img 
-                src="/logo.png" 
+                src="/logo3.png" 
                 alt="AltRx Logo"
                 style={{
-                  width: 45,
-                  height: 45,
-                  borderRadius: 8,
+                  width: 180,
+                  height: 180,
+                  borderRadius: 4,
                   objectFit: "contain",
                 }}
             />
-            <span>AltRx</span>
         </div>
 
         <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
@@ -262,11 +261,11 @@ export default function Home() {
           <div
             style={{
                 position: "absolute",
-                width: 500,  // Keep width exactly double the height
-                height: 250, 
-                borderRadius: "250px 250px 0 0", // Creates the perfectly flat-bottom semicircle
-                background: "linear-gradient(135deg, #62FF8B 0%, #2BC5FF 100%)",
-                bottom: 150, // Adjust this to move the semicircle up or down
+                width: 600,  // Keep width exactly double the height
+                height: 300, 
+                borderRadius: "300px 150px", // Creates the perfectly flat-bottom semicircle
+                background: "linear-gradient(135deg, #0be34c 0%, #00C6FF 100%)",
+                bottom: 85, // Adjust this to move the semicircle up or down
                 left: "50%",
                 transform: "translateX(-50%)",
                 zIndex: 0,
@@ -277,13 +276,13 @@ export default function Home() {
           <div
             style={{
                 position: "absolute",
-                width: 550, // Slightly wider than the semicircle
-                height: 100, // Thin height to act as a grounded floor shadow
-                bottom: 85, // Positioned just below the flat base of the semicircle
-                left: "50%",
+                width: 700, // Slightly wider than the semicircle
+                height: 400, // Thin height to act as a grounded floor shadow
+                bottom: 55, // Positioned just below the flat base of the semicircle
+                left: "0%",
                 transform: "translateX(-50%)",
                 background: "radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, transparent 70%)",
-                filter: "blur(14px)", // Tight blur for a realistic drop shadow
+                filter: "blur(1000px)", // Tight blur for a realistic drop shadow
                 zIndex: 1,
             }}
           />
@@ -298,7 +297,7 @@ export default function Home() {
             }}
         >
             <img 
-                src="/hero-image.png" 
+                src="/hero-image2.png" 
                 alt="AltRx Hero"
                 style={{
                   width: "100%",
@@ -351,12 +350,12 @@ export default function Home() {
       {/* Why Choose AltRx Section */}
       <div style={{ padding: "60px 40px", background: colors.black }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
-          <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, textAlign: "center", color: colors.white }}>Why Choose AltRx?</h2>
+          <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, textAlign: "center", color: colors.white }}>Why Choose Alt℞?</h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
             {(
               [
-                { icon: Shield, title: "Why Choose AltRx?", desc: "We make healthcare simple, accessible and affordable for everyone." },
+                { icon: Shield, title: "Why Choose Alt℞?", desc: "We make healthcare simple, accessible and affordable for everyone." },
                 { icon: Users, title: "Same Benefits", desc: "Alternate medicines with same composition" },
                 { icon: IndianRupee, title: "Affordable Prices", desc: "Best prices on all medicines" },
                 { icon: Stethoscope, title: "Trusted by Doctors", desc: "Partnered with verified pharmacies" },
@@ -456,7 +455,7 @@ export default function Home() {
       <div style={{ padding: "60px 40px", background: colors.black, borderTop: `1px solid ${colors.darkGray}` }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 12, color: colors.white }}>Featured Deals Today</h2>
-          <p style={{ fontSize: 14, color: colors.lightGray, marginBottom: 40 }}>Save up to 80% on popular medicines with AltRx</p>
+          <p style={{ fontSize: 14, color: colors.lightGray, marginBottom: 40 }}>Save up to 80% on popular medicines with Alt℞</p>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
@@ -526,7 +525,7 @@ export default function Home() {
       <div style={{ padding: "60px 40px", background: colors.almostBlack, borderTop: `1px solid ${colors.darkGray}` }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, textAlign: "center", color: colors.white }}>
-            How AltRx Works - Step by Step
+            How Alt℞ Works - Step by Step
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }}>
@@ -627,7 +626,7 @@ export default function Home() {
       <div style={{ padding: "60px 40px", background: colors.black, borderTop: `1px solid ${colors.darkGray}` }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <h2 style={{ fontSize: 32, fontWeight: 900, marginBottom: 40, textAlign: "center", color: colors.white }}>
-            Why Thousands Trust AltRx
+            Why Thousands Trust Alt℞
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
@@ -695,8 +694,8 @@ export default function Home() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
-              { name: "Rajesh Kumar", city: "Delhi", testimonial: "Saved ₹3,000 per month on my diabetes medication. AltRx is a lifesaver!", rating: 5 },
-              { name: "Priya Sharma", city: "Mumbai", testimonial: "Fast delivery and authentic medicines. I recommend AltRx to all my friends.", rating: 5 },
+              { name: "Rajesh Kumar", city: "Delhi", testimonial: "Saved ₹3,000 per month on my diabetes medication. Alt℞ is a lifesaver!", rating: 5 },
+              { name: "Priya Sharma", city: "Mumbai", testimonial: "Fast delivery and authentic medicines. I recommend Alt℞ to all my friends.", rating: 5 },
               { name: "Amit Patel", city: "Bangalore", testimonial: "Finding alternatives was so easy. Great app and amazing customer support!", rating: 4 },
             ].map((review) => (
               <div
@@ -767,7 +766,7 @@ export default function Home() {
         <div style={{ maxWidth: "1400px", margin: "0 auto 40px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 40, marginBottom: 40, textAlign: "left" }}>
             <div>
-              <h4 style={{ color: colors.white, fontWeight: 700, marginBottom: 16 }}>About AltRx</h4>
+              <h4 style={{ color: colors.white, fontWeight: 700, marginBottom: 16 }}>About Alt℞</h4>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 <li style={{ marginBottom: 8 }}><a href="#" style={{ color: colors.lightGray, textDecoration: "none" }}>About Us</a></li>
                 <li style={{ marginBottom: 8 }}><a href="#" style={{ color: colors.lightGray, textDecoration: "none" }}>Our Mission</a></li>
@@ -811,10 +810,10 @@ export default function Home() {
         </div>
         <div style={{ paddingTop: 24, borderTop: `1px solid ${colors.darkGray}` }}>
           <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, flexWrap: "wrap" }}>
-            © 2024 AltRx. All rights reserved. | Made with{" "}
+            © 2026 Alt℞ All rights reserved. | Made with{" "}
             <Heart size={14} color="#EF4444" fill="#EF4444" strokeWidth={2} /> for your health
           </p>
-          <p style={{ marginTop: 8, fontSize: 12 }}>Consult a qualified doctor before switching medicines.</p>
+          <p style={{ marginTop: 8, fontSize: 12 }}>Your money, Your Choice.</p>
         </div>
       </footer>
     </div>
