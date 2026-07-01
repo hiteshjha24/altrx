@@ -35,6 +35,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Dela_Gothic_One } from "next/font/google";
+import Link from "next/link";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,12 +90,25 @@ export default function Home() {
             />
         </div>
 
-        <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
-          {["Home", "Upload Prescription", "Find Medicines", "Health Resources", "Track Order", "About Us"].map((item) => (
-            <a key={item} href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
-              {item}
-            </a>
-          ))}
+                <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+          <Link href="/" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            Home
+          </Link>
+          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            Upload Prescription
+          </a>
+          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            Find Medicines
+          </a>
+          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            Health Resources
+          </a>
+          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            Track Order
+          </a>
+          <Link href="/about" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+            About Us
+          </Link>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -768,7 +782,7 @@ export default function Home() {
             <div>
               <h4 style={{ color: colors.white, fontWeight: 700, marginBottom: 16 }}>About Alt℞</h4>
               <ul style={{ listStyle: "none", padding: 0 }}>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: colors.lightGray, textDecoration: "none" }}>About Us</a></li>
+                <li style={{ marginBottom: 8 }}><Link href="/about" style={{ color: colors.lightGray, textDecoration: "none" }}>About Us</Link></li>
                 <li style={{ marginBottom: 8 }}><a href="#" style={{ color: colors.lightGray, textDecoration: "none" }}>Our Mission</a></li>
                 <li><a href="#" style={{ color: colors.lightGray, textDecoration: "none" }}>Media Kit</a></li>
               </ul>
@@ -819,3 +833,5 @@ export default function Home() {
     </div>
   );
 }
+
+
