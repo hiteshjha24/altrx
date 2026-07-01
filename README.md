@@ -68,8 +68,8 @@ altrx/
 │   └── schema.sql          # DDL + seed data (PostgreSQL)
 │
 ├── backend/
-│   ├── main.py             # FastAPI app + all routes
-│   ├── database.py         # asyncpg connection pool
+│   ├── main.py             # FastAPI app + all the routes
+│   ├── database.py         # asyncpg connection pool {PostbresSQL}
 │   ├── schemas.py          # Pydantic v2 request/response models
 │   ├── search.py           # Fuzzy search + pg_trgm logic
 │   ├── requirements.txt
@@ -110,7 +110,7 @@ salts (chemical_name, primary_uses, side_effects, safety_warnings_json)
                                Computed: price_per_unit = price / pack_size
 ```
 
-**Key insight:** `price_per_unit` is a PostgreSQL `GENERATED ALWAYS` column — it's computed automatically from `price ÷ pack_size`, eliminating sync bugs.
+**Key insight:** `price_per_unit` is a PostgreSQL `GENERATED ALWAYS` column — it's computed automatically from `price ÷ pack_size`, eliminating all the sync bugs.
 
 Fuzzy search uses the `pg_trgm` extension with GIN indexes for sub-millisecond typo-tolerant lookups.
 
