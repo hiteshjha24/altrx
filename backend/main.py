@@ -15,14 +15,24 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .database import db
-from .schemas import (
-    AlternativeResponse,
-    MedicineDetail,
-    MedicineSearchResult,
-    SearchResponse,
-)
-from .search import fuzzy_search, log_search
+try:
+    from .database import db
+    from .schemas import (
+        AlternativeResponse,
+        MedicineDetail,
+        MedicineSearchResult,
+        SearchResponse,
+    )
+    from .search import fuzzy_search, log_search
+except ImportError:  # pragma: no cover - allows running main.py directly
+    from database import db
+    from schemas import (
+        AlternativeResponse,
+        MedicineDetail,
+        MedicineSearchResult,
+        SearchResponse,
+    )
+    from search import fuzzy_search, log_search
 
 
 # ─────────────────────────────────────────────

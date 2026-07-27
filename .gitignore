@@ -59,6 +59,7 @@ backend/env/
 backend/.vscode/
 backend/.idea/
 
+
 # IDE & Editors
 .vscode/
 .idea/

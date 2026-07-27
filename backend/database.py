@@ -10,10 +10,9 @@ class Database:
     pool: asyncpg.Pool | None = None
 
     async def connect(self):
-        dsn = os.getenv(
-            "DATABASE_URL",
-            "postgresql://postgres:Hitesh%4069@localhost:5432/altrx_db",
-        )
+        dsn = os.getenv("DATABASE_URL")
+        if not dsn:
+            raise RuntimeError("DATABASE_URL environment variable not found.")
         self.pool = await asyncpg.create_pool(
             dsn,
             min_size=2,

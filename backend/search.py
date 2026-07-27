@@ -5,8 +5,12 @@ Uses PostgreSQL pg_trgm for typo-tolerant brand/salt name matching
 
 from __future__ import annotations
 
-from .database import db
-from .schemas import SearchResultItem
+try:
+    from .database import db
+    from .schemas import SearchResultItem
+except ImportError:  # pragma: no cover - allows running search.py directly
+    from database import db
+    from schemas import SearchResultItem
 
 
 # ─────────────────────────────────────────────
