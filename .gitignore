@@ -70,6 +70,7 @@ backend/.idea/
 Thumbs.db
 *.sublime-project
 *.sublime-workspace
+.venv
 
 # OS specific
 .DS_Store

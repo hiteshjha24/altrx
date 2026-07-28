@@ -9,6 +9,8 @@ import hashlib
 import os
 from contextlib import asynccontextmanager
 from typing import Any
+from dotenv import load_dotenv
+load_dotenv("../.env.local")
 
 import asyncpg
 from fastapi import FastAPI, HTTPException, Query, Request

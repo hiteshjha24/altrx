@@ -4,7 +4,10 @@ AltRx · Database connection manager (asyncpg connection pool)
 
 import os
 import asyncpg
+import os
+from dotenv import load_dotenv
 
+load_dotenv("../.env.local")
 
 class Database:
     pool: asyncpg.Pool | None = None
