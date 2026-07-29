@@ -4,7 +4,7 @@
  * Replace BASE_URL via NEXT_PUBLIC_API_URL env var.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface SafetyWarning {
@@ -80,7 +80,9 @@ export interface AlternativeResponse {
 
 // ─── Fetch helpers ────────────────────────────────────────────────────────
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  
+  const res = await fetch(`${BASE_URL}${cleanPath}`, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
