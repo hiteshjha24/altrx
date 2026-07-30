@@ -94,16 +94,16 @@ export default function Home() {
           <Link href="/" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
             Home
           </Link>
-          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+          <a href="/upload-prescription" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
             Upload Prescription
           </a>
-          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+          <a href="/search-page" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
             Find Medicines
           </a>
-          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+          <a href="/" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
             Health Resources
           </a>
-          <a href="#" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
+          <a href="/" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
             Track Order
           </a>
           <Link href="/about" style={{ fontSize: 14, color: colors.lightGray, cursor: "pointer", textDecoration: "none" }}>
