@@ -71,6 +71,13 @@ export interface SearchResponse {
   results: SearchResultItem[];
 }
 
+export interface PrescriptionRecognitionResponse {
+  success: boolean;
+  recognizedMedicines: string[];
+  matchedMedicines: SearchResultItem[];
+  unmatchedMedicines: string[];
+}
+
 export interface AlternativeResponse {
   target: MedicineDetail;
   alternatives_count: number;
@@ -93,6 +100,18 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function apiFormFetch<T>(path: string, formData: FormData): Promise<T> {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const res = await fetch(`${BASE_URL}${cleanPath}`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const payload = await res.json().catch(() => null) as { detail?: string } | null;
+    throw new Error(payload?.detail ?? "Unable to analyze this prescription.");
+  }
+  return res.json() as Promise<T>;
+}
 // ─── API calls ────────────────────────────────────────────────────────────
 export const api = {
   search: (query: string, limit = 10, form?: string): Promise<SearchResponse> => {
@@ -112,4 +131,10 @@ export const api = {
 
   getPopular: (): Promise<{ suggestions: string[] }> =>
     apiFetch<{ suggestions: string[] }>(`/api/popular`),
+
+  recognizePrescription: (file: File): Promise<PrescriptionRecognitionResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiFormFetch<PrescriptionRecognitionResponse>("/api/prescriptions/recognize", formData);
+  },
 };

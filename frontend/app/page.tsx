@@ -175,7 +175,8 @@ export default function Home() {
             </div>
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: colors.white }}>Upload Prescription</div>
               <div style={{ fontSize: 13, color: colors.lightGray, marginBottom: 12 }}>Upload a clear image of your prescription</div>
-              <button
+              <Link
+                href="/upload-prescription"
                 style={{
                   background: "transparent",
                   border: `1px solid ${colors.brightBlue}`,
@@ -185,10 +186,12 @@ export default function Home() {
                   cursor: "pointer",
                   fontSize: 12,
                   fontWeight: 600,
+                  textDecoration: "none",
+                  display: "inline-block",
                 }}
               >
                 Choose File
-              </button>
+              </Link>
             </div>
 
             {/* Search Card */}

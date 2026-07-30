@@ -122,3 +122,13 @@ class AlternativeResponse(BaseModel):
     alternatives_count: int
     max_savings_percentage: float
     alternatives: list[MedicineSummary]
+
+
+# ─────────────────────────────────────────────
+# Prescription recognition response
+# ─────────────────────────────────────────────
+class PrescriptionRecognitionResponse(BaseModel):
+    success: bool
+    recognized_medicines: list[str] = Field(serialization_alias="recognizedMedicines")
+    matched_medicines: list[SearchResultItem] = Field(serialization_alias="matchedMedicines")
+    unmatched_medicines: list[str] = Field(serialization_alias="unmatchedMedicines")

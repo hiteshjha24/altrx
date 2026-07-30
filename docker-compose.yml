@@ -23,6 +23,8 @@ services:
 
   # ─── FastAPI Backend ──────────────────────────────────────────────────────
   backend:
+    env_file:
+      - .env.local
     build:
       context: ./backend
       dockerfile: Dockerfile

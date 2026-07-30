@@ -187,6 +187,17 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv_medicine_full;
 
 ---
 
+## 🩺 Prescription Recognition
+
+`POST /api/prescriptions/recognize` accepts a multipart field named `file` containing a JPG, JPEG, PNG, or WebP image up to 10 MB. Images are validated in memory, passed directly to Groq for recognition, and are not persisted by AltRx.
+
+Add these server-only variables to `.env.local` (or your deployment secrets):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `GROQ_API_KEY` | — | Groq API key used only by the FastAPI backend |
+| `GROQ_VISION_MODEL` | `qwen/qwen2.5-vl-72b-instruct` | Vision model for prescription extraction |
+| `GROQ_API_URL` | `https://api.groq.com/openai/v1/chat/completions` | Optional Groq-compatible endpoint override |
 ## ⚠️ Disclaimer
 
 AltRx is purely informational. It is not a licensed pharmacy, does not sell medicines, and the information provided is not a substitute for professional medical advice. Always consult a qualified healthcare provider before changing medication.

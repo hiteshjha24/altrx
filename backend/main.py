@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv("../.env.local")
 
 import asyncpg
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -23,7 +23,14 @@ try:
         AlternativeResponse,
         MedicineDetail,
         MedicineSearchResult,
+        PrescriptionRecognitionResponse,
         SearchResponse,
+    )
+    from .prescription import (
+        MAX_PRESCRIPTION_BYTES,
+        PrescriptionError,
+        extract_medicine_names,
+        validate_prescription_image,
     )
     from .search import fuzzy_search, log_search
 except ImportError:  # pragma: no cover - allows running main.py directly
@@ -32,7 +39,14 @@ except ImportError:  # pragma: no cover - allows running main.py directly
         AlternativeResponse,
         MedicineDetail,
         MedicineSearchResult,
+        PrescriptionRecognitionResponse,
         SearchResponse,
+    )
+    from prescription import (
+        MAX_PRESCRIPTION_BYTES,
+        PrescriptionError,
+        extract_medicine_names,
+        validate_prescription_image,
     )
     from search import fuzzy_search, log_search
 
@@ -305,3 +319,61 @@ def _alt_to_summary(row: dict) -> dict:
         "savings_percentage": row.get("savings_percentage", 0.0),
         "is_cheaper": row.get("is_cheaper", False),
     }
+
+
+# ─────────────────────────────────────────────
+# ROUTE: Recognize medicines from a prescription image
+# POST /api/prescriptions/recognize
+# ─────────────────────────────────────────────
+@app.post(
+    "/api/prescriptions/recognize",
+    response_model=PrescriptionRecognitionResponse,
+    tags=["Prescriptions"],
+)
+async def recognize_prescription(file: UploadFile = File(...)):
+    """Extract medicine names from an uploaded image and match them against the catalogue."""
+    if not file.filename:
+        raise HTTPException(status_code=422, detail="Please choose a prescription image to upload.")
+
+    try:
+        # The extra byte lets us enforce the limit before holding an arbitrary upload in memory.
+        contents = await file.read(MAX_PRESCRIPTION_BYTES + 1)
+        image_type = validate_prescription_image(contents, file.content_type)
+        recognized_medicines = await extract_medicine_names(contents, image_type)
+    except PrescriptionError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+    finally:
+        await file.close()
+
+    if not recognized_medicines:
+        raise HTTPException(
+            status_code=422,
+            detail="No medicine names were detected. Please upload a clearer, well-lit prescription image.",
+        )
+
+    try:
+        matched_by_id = {}
+        unmatched_medicines = []
+        for medicine_name in recognized_medicines:
+            matches = await fuzzy_search(medicine_name, limit=50)
+            if matches:
+                for match in matches:
+                    matched_by_id.setdefault(match.id, match)
+            else:
+                unmatched_medicines.append(medicine_name)
+    except (asyncpg.PostgresError, AttributeError) as exc:
+        # Do not leak database details, but preserve server-side context for operators.
+        import logging
+
+        logging.getLogger(__name__).exception("Prescription medicine lookup failed")
+        raise HTTPException(
+            status_code=503,
+            detail="We recognized the prescription but could not search the medicine catalogue. Please try again.",
+        ) from exc
+
+    return PrescriptionRecognitionResponse(
+        success=True,
+        recognized_medicines=recognized_medicines,
+        matched_medicines=list(matched_by_id.values()),
+        unmatched_medicines=unmatched_medicines,
+    )
