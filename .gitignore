@@ -2,7 +2,7 @@
 .env
 .env.*.local
 .env.production.local
-
+.env.local
 # Database
 .database/
 *.sql.bak

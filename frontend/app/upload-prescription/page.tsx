@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Dna, IndianRupee, Search } from "lucide-react";
+import { ArrowLeft, Dna, IndianRupee, LoaderCircle, ScanLine, Search } from "lucide-react";
 import { api, type PrescriptionRecognitionResponse } from "@/lib/api";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -112,6 +112,31 @@ export default function UploadPrescription() {
             ) : null}
 
             {error ? <p role="alert" className="rounded-lg border border-red-900 bg-red-950/50 p-3 text-sm text-red-200">{error}</p> : null}
+
+            {isUploading ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className="overflow-hidden rounded-xl border border-[#00e599]/40 bg-[#00e599]/5 p-5"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#00e599]/50 bg-black text-[#00e599]">
+                    <span className="absolute inset-0 rounded-full border-2 border-[#00e599]/30 animate-ping" />
+                    <ScanLine size={23} className="animate-pulse" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="flex items-center gap-2 font-bold text-white">
+                      Analyzing your prescription
+                      <LoaderCircle size={17} className="animate-spin text-[#00e599]" aria-hidden="true" />
+                    </p>
+                    <p className="mt-1 text-sm text-gray-400">Our AI is reading the image and matching medicines. This usually takes 10–15 seconds.</p>
+                  </div>
+                </div>
+                <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-gray-800" aria-hidden="true">
+                  <div className="h-full w-2/3 rounded-full bg-[#00e599] animate-pulse" />
+                </div>
+              </div>
+            ) : null}
 
             <button
               type="submit"

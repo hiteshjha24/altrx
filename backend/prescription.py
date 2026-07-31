@@ -1,4 +1,4 @@
-"""Prescription image validation, Groq extraction, and medicine matching helpers."""
+"""Prescription image validation, Hugging Face extraction, and medicine matching helpers."""
 
 from __future__ import annotations
 
@@ -16,8 +16,10 @@ logger = logging.getLogger(__name__)
 
 MAX_PRESCRIPTION_BYTES = 10 * 1024 * 1024
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-GROQ_CHAT_COMPLETIONS_URL = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_GROQ_VISION_MODEL = "qwen/qwen2.5-vl-72b-instruct"
+
+# Hugging Face OpenAI-compatible Chat Completions Router URL
+HF_CHAT_COMPLETIONS_URL = "https://router.huggingface.co/v1/chat/completions"
+DEFAULT_HF_VISION_MODEL ="Qwen/Qwen2.5-VL-72B-Instruct"
 
 EXTRACTION_PROMPT = """You extract medicine names from prescription images.
 Read both handwritten and printed prescriptions. Return exactly one JSON object in
@@ -91,10 +93,16 @@ def normalize_medicine_names(values: Iterable[object]) -> list[str]:
     return medicines
 
 
-def parse_groq_medicines(content: str) -> list[str]:
-    """Parse a JSON-mode response defensively and normalize its medicine list."""
+def parse_hf_medicines(content: str) -> list[str]:
+    """Parse a JSON response defensively and normalize its medicine list."""
+    # Strip markdown code fencing if returned by the model
+    clean_content = content.strip()
+    if clean_content.startswith("```"):
+        clean_content = re.sub(r"^```(?:json)?\n?", "", clean_content)
+        clean_content = re.sub(r"\n?```$", "", clean_content).strip()
+
     try:
-        payload = json.loads(content)
+        payload = json.loads(clean_content)
     except (TypeError, json.JSONDecodeError) as exc:
         raise PrescriptionError("We could not read medicine names from this prescription. Please try a clearer image.", 422) from exc
 
@@ -105,17 +113,19 @@ def parse_groq_medicines(content: str) -> list[str]:
 
 
 async def extract_medicine_names(contents: bytes, image_type: str) -> list[str]:
-    """Send the image directly to Groq; uploaded prescriptions are never persisted."""
-    api_key = os.getenv("GROQ_API_KEY")
+    """Send the image to Hugging Face Inference Router; uploaded prescriptions are never persisted."""
+    api_key = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACE_API_KEY")
     if not api_key:
-        logger.error("Prescription recognition is not configured: GROQ_API_KEY is missing")
+        logger.error("Prescription recognition is not configured: HF_TOKEN is missing")
         raise PrescriptionError("Prescription recognition is not configured yet. Please try again later.", 503)
 
     image_data = base64.b64encode(contents).decode("ascii")
+    model_name = os.getenv("HF_VISION_MODEL", DEFAULT_HF_VISION_MODEL)
+
     payload = {
-        "model": os.getenv("GROQ_VISION_MODEL", DEFAULT_GROQ_VISION_MODEL),
+        "model": model_name,
         "temperature": 0.01,
-        "max_completion_tokens": 500,
+        "max_tokens": 500,
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": EXTRACTION_PROMPT},
@@ -132,26 +142,29 @@ async def extract_medicine_names(contents: bytes, image_type: str) -> list[str]:
     try:
         async with httpx.AsyncClient(timeout=httpx.Timeout(45.0, connect=10.0)) as client:
             response = await client.post(
-                os.getenv("GROQ_API_URL", GROQ_CHAT_COMPLETIONS_URL),
-                headers={"Authorization": f"Bearer {api_key}"},
+                os.getenv("HF_API_URL", HF_CHAT_COMPLETIONS_URL),
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
                 json=payload,
             )
     except httpx.TimeoutException as exc:
-        logger.warning("Groq prescription recognition timed out")
+        logger.warning("Hugging Face prescription recognition timed out")
         raise PrescriptionError("Prescription analysis timed out. Please try again.", 504) from exc
     except httpx.HTTPError as exc:
-        logger.exception("Groq prescription recognition request failed")
+        logger.exception("Hugging Face prescription recognition request failed")
         raise PrescriptionError("Prescription analysis is temporarily unavailable. Please try again.", 502) from exc
 
     if response.status_code >= 400:
-        logger.warning("Groq prescription recognition failed with status %s", response.status_code)
+        logger.warning("Hugging Face prescription recognition failed with status %s: %s", response.status_code, response.text)
         raise PrescriptionError("Prescription analysis is temporarily unavailable. Please try again.", 502)
 
     try:
         response_payload = response.json()
         content = response_payload["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError, ValueError) as exc:
-        logger.warning("Groq returned an unexpected prescription recognition payload")
+        logger.warning("Hugging Face returned an unexpected prescription recognition payload")
         raise PrescriptionError("We could not read medicine names from this prescription. Please try a clearer image.", 422) from exc
 
-    return parse_groq_medicines(content)
+    return parse_hf_medicines(content)

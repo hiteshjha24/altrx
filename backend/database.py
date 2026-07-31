@@ -20,6 +20,7 @@ class Database:
             dsn,
             min_size=2,
             max_size=10,
+            statement_cache_size=0,
             command_timeout=30,
             # Register JSON codec so JSONB comes back as dict
             init=_init_conn,
