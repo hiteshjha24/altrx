@@ -1,10 +1,29 @@
 import React from 'react';
-import { ShieldCheck, Truck, Lock, FlaskConical, HeartHandshake, Cpu } from 'lucide-react';
+import { ShieldCheck, Truck, Lock, FlaskConical, Upload, Search } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-black text-gray-200 pb-20">
+      {/* Custom Keyframe Styles for the expanding circle fill effect */}
+      <style>{`
+        @keyframes fillExpand {
+          0% {
+            width: 0px;
+            height: 0px;
+            opacity: 0.8;
+          }
+          100% {
+            width: 400px;
+            height: 400px;
+            opacity: 0;
+          }
+        }
+        .animate-fill-circle {
+          animation: fillExpand 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+      `}</style>
+
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 px-6 sm:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-teal-500/20 blur-[120px] rounded-full pointer-events-none" />
@@ -62,7 +81,6 @@ export default function AboutPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Feature 1 */}
           <div className="bg-[#111] border border-gray-900 p-6 rounded-xl flex flex-col items-center text-center hover:border-teal-900 transition-colors">
             <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center mb-4">
               <ShieldCheck className="text-teal-400" size={24} />
@@ -73,7 +91,6 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Feature 2 */}
           <div className="bg-[#111] border border-gray-900 p-6 rounded-xl flex flex-col items-center text-center hover:border-teal-900 transition-colors">
             <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center mb-4">
               <Lock className="text-teal-400" size={24} />
@@ -84,7 +101,6 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Feature 3 */}
           <div className="bg-[#111] border border-gray-900 p-6 rounded-xl flex flex-col items-center text-center hover:border-teal-900 transition-colors">
             <div className="w-12 h-12 bg-teal-500/10 rounded-full flex items-center justify-center mb-4">
               <Truck className="text-teal-400" size={24} />
@@ -101,15 +117,35 @@ export default function AboutPage() {
       <section className="px-6 sm:px-12 max-w-4xl mx-auto py-16 text-center">
         <div className="bg-gradient-to-b from-[#1a1a1a] to-black border border-gray-800 rounded-2xl p-10">
           <h2 className="text-2xl font-bold text-white mb-4">Ready to find your alternative?</h2>
-          <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+          <p className="text-gray-400 mb-10 max-w-xl mx-auto">
             Join thousands of users who have switched to smarter, affordable healthcare with Alt℞.
           </p>
-          <Link 
-            href="/upload" 
-            className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors gap-2"
-          >
-            Upload Prescription
-          </Link>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8">
+            {/* Upload Prescription Button */}
+            <Link 
+              href="/upload-prescription" 
+              className="relative overflow-hidden inline-flex items-center justify-center px-8 py-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:-translate-y-0.5 gap-3 w-full sm:w-auto z-10"
+            >
+              {/* Center Expanding Circle Effect */}
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-300/40 animate-fill-circle pointer-events-none -z-10" />
+
+              <Upload size={18} className="relative z-10" />
+              <span className="relative z-10">Upload Prescription</span>
+            </Link>
+
+            {/* Search Medicine Button */}
+            <Link 
+              href="/search-page" 
+              className="relative overflow-hidden inline-flex items-center justify-center px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:-translate-y-0.5 gap-3 w-full sm:w-auto z-10"
+            >
+              {/* Center Expanding Circle Effect */}
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/40 animate-fill-circle pointer-events-none -z-10" />
+
+              <Search size={18} className="relative z-10" />
+              <span className="relative z-10">Search Medicine</span>
+            </Link>
+          </div>
         </div>
       </section>
     </main>

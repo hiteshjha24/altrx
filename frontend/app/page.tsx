@@ -62,6 +62,12 @@ export default function Home() {
     window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
   };
 
+  const goToSearch = (medicine?: string) => {
+    window.location.href = medicine
+      ? `/search?q=${encodeURIComponent(medicine)}`
+      : "/search-page";
+  };
+
   return (
     <div style={{ background: colors.black, color: colors.white, minHeight: "100vh" }}>
       {/* Navbar */}
@@ -517,16 +523,20 @@ export default function Home() {
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: colors.white }}>{med.alt}</div>
                 </div>
-                <button style={{
-                  width: "100%",
-                  background: colors.brightBlue,
-                  border: "none",
-                  color: colors.white,
-                  padding: "10px",
-                  borderRadius: 6,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}>
+                <button
+                  type="button"
+                  onClick={() => goToSearch(med.name)}
+                  style={{
+                    width: "100%",
+                    background: colors.brightBlue,
+                    border: "none",
+                    color: colors.white,
+                    padding: "10px",
+                    borderRadius: 6,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
                     View Alternatives
                     <ArrowRight size={16} strokeWidth={2} />
@@ -750,28 +760,36 @@ export default function Home() {
             Upload your prescription or search for medicines to find affordable alternatives. Save money without compromising on quality.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-            <button style={{
-              background: colors.brightBlue,
-              color: colors.white,
-              border: "none",
-              padding: "14px 32px",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}>
+            <button
+              type="button"
+              onClick={() => { window.location.href = "/upload-prescription"; }}
+              style={{
+                background: colors.brightBlue,
+                color: colors.white,
+                border: "none",
+                padding: "14px 32px",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
               Upload Prescription Now
             </button>
-            <button style={{
-              background: "transparent",
-              color: colors.brightBlue,
-              border: `1px solid ${colors.brightBlue}`,
-              padding: "14px 32px",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}>
+            <button
+              type="button"
+              onClick={() => goToSearch()}
+              style={{
+                background: "transparent",
+                color: colors.brightBlue,
+                border: `1px solid ${colors.brightBlue}`,
+                padding: "14px 32px",
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
               Search Medicines
             </button>
           </div>
