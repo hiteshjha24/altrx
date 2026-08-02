@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv("../.env.local")
 
 import asyncpg
+import httpx
 from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -21,11 +22,14 @@ try:
     from .database import db
     from .schemas import (
         AlternativeResponse,
+        HomeRemedyChatRequest,
+        HomeRemedyResponse,
         MedicineDetail,
         MedicineSearchResult,
         PrescriptionRecognitionResponse,
         SearchResponse,
     )
+    from .chatbot import build_safe_default_response, generate_home_remedy_response
     from .prescription import (
         MAX_PRESCRIPTION_BYTES,
         PrescriptionError,
@@ -37,11 +41,14 @@ except ImportError:  # pragma: no cover - allows running main.py directly
     from database import db
     from schemas import (
         AlternativeResponse,
+        HomeRemedyChatRequest,
+        HomeRemedyResponse,
         MedicineDetail,
         MedicineSearchResult,
         PrescriptionRecognitionResponse,
         SearchResponse,
     )
+    from chatbot import build_safe_default_response, generate_home_remedy_response
     from prescription import (
         MAX_PRESCRIPTION_BYTES,
         PrescriptionError,
@@ -83,6 +90,16 @@ app.add_middleware(
 @app.get("/health", tags=["System"])
 async def health_check():
     return {"status": "ok", "service": "AltRx API"}
+
+
+@app.post("/api/home-remedies/chat", response_model=HomeRemedyResponse, tags=["Health"])
+async def ask_home_remedies(payload: HomeRemedyChatRequest):
+    """Provide supportive, evidence-backed home-remedy guidance while encouraging medical care."""
+    try:
+        return await generate_home_remedy_response(payload)
+    except (RuntimeError, ValueError, httpx.HTTPError) as exc:
+        # Preserve a safe fallback even if the Groq API is unavailable or misconfigured.
+        return build_safe_default_response(payload.symptoms, payload.region)
 
 
 # ─────────────────────────────────────────────

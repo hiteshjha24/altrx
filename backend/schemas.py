@@ -29,6 +29,29 @@ class SafetyWarnings(BaseModel):
     model_config = {"extra": "allow"}  # allow any additional keys
 
 
+class HomeRemedyChatRequest(BaseModel):
+    symptoms: str = Field(..., min_length=3, max_length=800)
+    region: str = Field(..., min_length=2, max_length=200)
+
+
+class HomeRemedyItem(BaseModel):
+    name: str
+    instructions: str
+    why_it_may_help: str
+    precautions: str
+    who_should_avoid: str
+    scientific_explanation: str
+    evidence_summary: str
+    sources: list[str] = []
+
+
+class HomeRemedyResponse(BaseModel):
+    possible_condition: str
+    explanation: str
+    remedies: list[HomeRemedyItem]
+    disclaimer: str
+
+
 # ─────────────────────────────────────────────
 # Medicine summary (used in search results & alternatives list)
 # ─────────────────────────────────────────────

@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { Dela_Gothic_One } from "next/font/google";
 import Link from "next/link";
+import HomeRemedyChat from "@/components/HomeRemedyChat";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -331,6 +332,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <HomeRemedyChat />
 
       {/* Process Section */}
       <div style={{ padding: "60px 40px", background: colors.almostBlack, borderTop: `1px solid ${colors.darkGray}` }}>

@@ -85,6 +85,24 @@ export interface AlternativeResponse {
   alternatives: MedicineSummary[];
 }
 
+export interface HomeRemedyItem {
+  name: string;
+  instructions: string;
+  why_it_may_help: string;
+  precautions: string;
+  who_should_avoid: string;
+  scientific_explanation: string;
+  evidence_summary: string;
+  sources: string[];
+}
+
+export interface HomeRemedyResponse {
+  possible_condition: string;
+  explanation: string;
+  remedies: HomeRemedyItem[];
+  disclaimer: string;
+}
+
 // ─── Fetch helpers ────────────────────────────────────────────────────────
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
@@ -131,6 +149,12 @@ export const api = {
 
   getPopular: (): Promise<{ suggestions: string[] }> =>
     apiFetch<{ suggestions: string[] }>(`/api/popular`),
+
+  askHomeRemedies: (symptoms: string, region: string): Promise<HomeRemedyResponse> =>
+    apiFetch<HomeRemedyResponse>("/api/home-remedies/chat", {
+      method: "POST",
+      body: JSON.stringify({ symptoms, region }),
+    }),
 
   recognizePrescription: (file: File): Promise<PrescriptionRecognitionResponse> => {
     const formData = new FormData();
