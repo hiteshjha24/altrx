@@ -96,7 +96,27 @@ CREATE INDEX idx_search_logs_created_at ON search_logs (created_at DESC);
 CREATE INDEX idx_search_logs_session    ON search_logs (user_session);
 
 -- ─────────────────────────────────────────────
--- 4. ALTERNATIVE_VIEWS  (Materialised for perf)
+-- 4. USERS  (User authentication & profiles)
+-- ─────────────────────────────────────────────
+CREATE TABLE users (
+    id              SERIAL PRIMARY KEY,
+    email           TEXT NOT NULL UNIQUE,
+    first_name      TEXT NOT NULL,
+    last_name       TEXT NOT NULL,
+    password_hash   TEXT NOT NULL,              -- bcrypt hash, never plain password
+    phone           TEXT,                       -- optional
+    address         TEXT,                       -- optional delivery address
+    city            TEXT,                       -- optional
+    is_active       BOOLEAN DEFAULT TRUE,       -- soft delete / account status
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_users_email            ON users (email);
+CREATE INDEX idx_users_created_at       ON users (created_at DESC);
+
+-- ─────────────────────────────────────────────
+-- 5. ALTERNATIVE_VIEWS  (Materialised for perf)
 --    Pre-joins for the most common query pattern
 -- ─────────────────────────────────────────────
 CREATE MATERIALIZED VIEW mv_medicine_full AS
@@ -151,6 +171,10 @@ CREATE TRIGGER trg_salts_updated_at
 
 CREATE TRIGGER trg_medicines_updated_at
     BEFORE UPDATE ON medicines
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_users_updated_at
+    BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ─────────────────────────────────────────────

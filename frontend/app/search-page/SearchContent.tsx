@@ -4,6 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Minus, Plus, ShoppingCart } from 'lucide-react';
+import { addCartItem, getAuthenticatedUser } from '@/lib/cart';
 
 
 interface Medicine {
@@ -29,6 +31,8 @@ export default function SearchPage() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [addedId, setAddedId] = useState<string | null>(null);
 
   // Sync state if URL parameter changes
   useEffect(() => {
@@ -80,6 +84,25 @@ export default function SearchPage() {
 
     setQuery(formattedTerm);
     router.push(`/search?q=${encodeURIComponent(formattedTerm)}`);
+  };
+
+  const getMedicineId = (medicine: Medicine, index: number) => String(medicine.id ?? index);
+
+  const updateQuantity = (medicineId: string, change: number) => {
+    setQuantities((current) => ({ ...current, [medicineId]: Math.max(1, (current[medicineId] ?? 1) + change) }));
+  };
+
+  const addToCart = (medicine: Medicine, index: number) => {
+    if (!getAuthenticatedUser()) {
+      window.location.href = `/login?next=/search-page${query ? `?q=${encodeURIComponent(query)}` : ''}`;
+      return;
+    }
+
+    const id = getMedicineId(medicine, index);
+    const quantity = quantities[id] ?? 1;
+    addCartItem({ ...medicine, id, price: medicine.price ?? 0 }, quantity);
+    setAddedId(id);
+    window.setTimeout(() => setAddedId((current) => current === id ? null : current), 1600);
   };
 
   return (
@@ -201,9 +224,23 @@ export default function SearchPage() {
                     )}
                   </div>
 
-                  <button className="w-full mt-2 bg-[#121212] hover:bg-[#00e599] text-gray-200 hover:text-black font-bold text-sm py-2.5 px-4 rounded-lg transition-colors border border-gray-800 hover:border-[#00e599]">
-                    Add to Cart
-                  </button>
+                  <div className="mt-2 space-y-2">
+                    <div className="flex items-center justify-end gap-2 text-xs text-gray-400">
+                      <span>Quantity</span>
+                      <button type="button" onClick={() => updateQuantity(getMedicineId(item, index), -1)} aria-label="Decrease quantity" className="flex h-7 w-7 items-center justify-center rounded border border-gray-800 bg-[#121212] text-gray-300"><Minus size={14} /></button>
+                      <span className="min-w-5 text-center font-bold text-white">{quantities[getMedicineId(item, index)] ?? 1}</span>
+                      <button type="button" onClick={() => updateQuantity(getMedicineId(item, index), 1)} aria-label="Increase quantity" className="flex h-7 w-7 items-center justify-center rounded border border-gray-800 bg-[#121212] text-gray-300"><Plus size={14} /></button>
+                    </div>
+                    <div className="text-right text-xs text-gray-300">Total: <strong className="text-white">₹{(Number(item.price || 0) * (quantities[getMedicineId(item, index)] ?? 1)).toFixed(2)}</strong></div>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <button type="button" onClick={() => addToCart(item, index)} className="flex items-center justify-center gap-2 rounded-lg border border-[#00e599] bg-[#00e599] px-3 py-2.5 text-sm font-bold text-black transition-colors">
+                        <ShoppingCart size={16} /> {addedId === getMedicineId(item, index) ? 'Added' : 'Add to cart'}
+                      </button>
+                      <Link href={`/medicines/${item.id}/alternatives`} className="flex items-center justify-center rounded-lg border border-gray-800 bg-[#121212] px-3 py-2.5 text-center text-sm font-bold text-gray-200 transition-colors hover:border-[#00e599] hover:text-[#00e599]">
+                        View alternatives
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

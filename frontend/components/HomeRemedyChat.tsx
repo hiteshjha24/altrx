@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Bot, LoaderCircle, SendHorizonal, ShieldAlert, Sparkles, X } from "lucide-react";
+import { Bot, RotateCcw, SendHorizonal, ShieldAlert, Sparkles, X } from "lucide-react";
 import { api } from "@/lib/api";
 
 interface Message {
@@ -11,6 +11,7 @@ interface Message {
   role: "assistant" | "user";
   content: string;
   isError?: boolean;
+  createdAt: number;
 }
 
 export default function HomeRemedyChat() {
@@ -22,6 +23,7 @@ export default function HomeRemedyChat() {
       role: "assistant",
       content:
         "Hello! I’m here to help with temporary relief suggestions while you arrange proper medical care. Tell me about your symptoms and which state or region you’re in so I can tailor general guidance.",
+      createdAt: Date.now(),
     },
   ]);
   const [symptoms, setSymptoms] = useState("");
@@ -39,6 +41,20 @@ export default function HomeRemedyChat() {
     return () => window.clearInterval(timer);
   }, []);
 
+  const resetChat = () => {
+    setMessages([
+      {
+        id: Date.now(),
+        role: "assistant",
+        content:
+          "Hello! I’m here to help with temporary relief suggestions while you arrange proper medical care. Tell me about your symptoms and which state or region you’re in so I can tailor general guidance.",
+        createdAt: Date.now(),
+      },
+    ]);
+    setError(null);
+    setLoading(false);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -53,6 +69,7 @@ export default function HomeRemedyChat() {
       id: Date.now(),
       role: "user",
       content: `Symptoms: ${trimmedSymptoms}\nRegion: ${trimmedRegion}`,
+      createdAt: Date.now(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -96,6 +113,7 @@ export default function HomeRemedyChat() {
           id: Date.now() + 1,
           role: "assistant",
           content: formattedContent,
+          createdAt: Date.now(),
         },
       ]);
     } catch (err) {
@@ -107,6 +125,7 @@ export default function HomeRemedyChat() {
           content:
             "I’m sorry, I couldn’t prepare a response right now. Please try again in a moment and seek medical care promptly if your symptoms are severe or worsening.",
           isError: true,
+          createdAt: Date.now(),
         },
       ]);
       setError(err instanceof Error ? err.message : "Unable to reach the assistant right now.");
@@ -132,6 +151,12 @@ export default function HomeRemedyChat() {
 
   return (
     <>
+      <style>{`
+        @keyframes bounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+          30% { transform: translateY(-5px); opacity: 1; }
+        }
+      `}</style>
       <button
         onClick={() => setIsOpen(true)}
         style={{
@@ -200,19 +225,26 @@ export default function HomeRemedyChat() {
                   <div style={{ fontSize: 12, color: "#D1D5DB" }}>Gentle guidance • professional care encouraged</div>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} style={{ border: "none", background: "rgba(255,255,255,0.08)", color: "#FFFFFF", borderRadius: 999, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <X size={16} />
-              </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button onClick={resetChat} title="Start a new chat" style={{ border: "none", background: "rgba(255,255,255,0.08)", color: "#D1D5DB", borderRadius: 999, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <RotateCcw size={16} />
+                </button>
+                <button onClick={() => setIsOpen(false)} title="Close chat" style={{ border: "none", background: "rgba(255,255,255,0.08)", color: "#FFFFFF", borderRadius: 999, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <X size={16} />
+                </button>
+              </div>
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 10px", display: "flex", flexDirection: "column", gap: 12 }}>
               {messages.map((message) => (
-                <div key={message.id} style={{ display: "flex", justifyContent: message.role === "user" ? "flex-end" : "flex-start" }}>
+                <div key={message.id} style={{ display: "flex", flexDirection: "column", alignItems: message.role === "user" ? "flex-end" : "flex-start" }}>
                   <div
                     style={{
                       maxWidth: "100%",
                       padding: "12px 14px",
                       borderRadius: 16,
+                      borderTopRightRadius: message.role === "user" ? 4 : 16,
+                      borderTopLeftRadius: message.role === "user" ? 16 : 4,
                       background: message.role === "user" ? "linear-gradient(135deg, #1998F4, #2F959E)" : "rgba(255,255,255,0.07)",
                       color: message.role === "user" ? "#FFFFFF" : "#F8FAFC",
                       border: message.isError ? "1px solid rgba(248, 113, 113, 0.35)" : `1px solid ${message.role === "user" ? "rgba(25, 152, 244, 0.25)" : "#2A2A2A"}`,
@@ -229,13 +261,44 @@ export default function HomeRemedyChat() {
                       <div style={{ whiteSpace: "pre-wrap", fontSize: 14, lineHeight: 1.5 }}>{message.content}</div>
                     )}
                   </div>
+                  <div style={{ fontSize: 10, color: "#6B7280", marginTop: 4, padding: "0 4px" }}>
+                    {new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </div>
                 </div>
               ))}
 
               {loading ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#D1D5DB", fontSize: 14 }}>
-                  <LoaderCircle className="animate-spin" size={16} />
-                  Preparing supportive guidance...
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: 999, background: "linear-gradient(135deg, #1998F4, #59C975)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Bot size={15} />
+                  </div>
+                  <div
+                    style={{
+                      padding: "12px 16px",
+                      borderRadius: 16,
+                      borderTopLeftRadius: 4,
+                      background: "rgba(255,255,255,0.07)",
+                      border: "1px solid #2A2A2A",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    {[0, 1, 2].map((dot) => (
+                      <span
+                        key={dot}
+                        style={{
+                          width: 7,
+                          height: 7,
+                          borderRadius: 999,
+                          background: "#68C795",
+                          display: "inline-block",
+                          animation: `bounce 1.2s ease-in-out ${dot * 0.18}s infinite`,
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               ) : null}
 
@@ -286,19 +349,22 @@ export default function HomeRemedyChat() {
                 />
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !symptoms.trim() || !region.trim()}
                   style={{
                     border: "none",
                     borderRadius: 12,
                     padding: "10px 14px",
-                    background: "linear-gradient(135deg, #1998F4, #59C975)",
-                    color: "#FFFFFF",
+                    background: loading || !symptoms.trim() || !region.trim()
+                      ? "rgba(89, 201, 117, 0.25)"
+                      : "linear-gradient(135deg, #1998F4, #59C975)",
+                    color: loading || !symptoms.trim() || !region.trim() ? "#8B8B8B" : "#FFFFFF",
                     fontWeight: 700,
-                    cursor: loading ? "wait" : "pointer",
+                    cursor: loading || !symptoms.trim() || !region.trim() ? "not-allowed" : "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: 8,
+                    transition: "background 0.2s ease, color 0.2s ease",
                   }}
                 >
                   <SendHorizonal size={16} />

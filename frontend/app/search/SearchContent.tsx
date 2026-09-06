@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Dna, IndianRupee, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Dna, IndianRupee, Minus, Plus, Search, ShoppingCart } from "lucide-react";
 import { api, type SearchResultItem } from "@/lib/api";
+import { addCartItem, getAuthenticatedUser } from "@/lib/cart";
 
 export default function SearchContent() {
   const searchParams = useSearchParams();
@@ -12,6 +13,8 @@ export default function SearchContent() {
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [addedId, setAddedId] = useState<number | null>(null);
 
   const colors = {
     black: "#000000",
@@ -55,6 +58,25 @@ export default function SearchContent() {
       active = false;
     };
   }, [query]);
+
+  const updateQuantity = (medicineId: number, change: number) => {
+    setQuantities((current) => ({
+      ...current,
+      [medicineId]: Math.max(1, (current[medicineId] ?? 1) + change),
+    }));
+  };
+
+  const addToCart = (medicine: SearchResultItem) => {
+    if (!getAuthenticatedUser()) {
+      window.location.href = "/login?next=/search";
+      return;
+    }
+
+    const quantity = quantities[medicine.id] ?? 1;
+    addCartItem(medicine, quantity);
+    setAddedId(medicine.id);
+    window.setTimeout(() => setAddedId((current) => current === medicine.id ? null : current), 1600);
+  };
 
   return (
     <main style={{ minHeight: "100vh", background: colors.black, color: colors.white, padding: "32px 40px" }}>
@@ -114,7 +136,7 @@ export default function SearchContent() {
                   </div>
                 </div>
 
-                <div style={{ textAlign: "right", minWidth: 180 }}>
+                <div style={{ textAlign: "right", minWidth: 220 }}>
                   <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 4, color: colors.emeraldGreen, fontSize: 26, fontWeight: 900 }}>
                     <IndianRupee size={20} />
                     {medicine.price.toFixed(2)}
@@ -122,13 +144,26 @@ export default function SearchContent() {
                   <div style={{ color: colors.mediumGray, fontSize: 12, marginBottom: 12 }}>
                     Rs {medicine.price_per_unit.toFixed(2)} / unit
                   </div>
-                  <Link
-                    href={`/medicines/${medicine.id}/alternatives`}
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, color: colors.white, background: colors.brightBlue, padding: "9px 14px", borderRadius: 6, textDecoration: "none", fontSize: 13, fontWeight: 700 }}
-                  >
-                    {medicine.alternatives_count} alternatives
-                    <ArrowRight size={15} />
-                  </Link>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, marginBottom: 10 }}>
+                    <span style={{ color: colors.mediumGray, fontSize: 12 }}>Qty</span>
+                    <button type="button" onClick={() => updateQuantity(medicine.id, -1)} aria-label={`Decrease ${medicine.brand_name} quantity`} style={quantityButtonStyle(colors)}><Minus size={14} /></button>
+                    <span style={{ minWidth: 20, color: colors.white, fontWeight: 800 }}>{quantities[medicine.id] ?? 1}</span>
+                    <button type="button" onClick={() => updateQuantity(medicine.id, 1)} aria-label={`Increase ${medicine.brand_name} quantity`} style={quantityButtonStyle(colors)}><Plus size={14} /></button>
+                  </div>
+                  <div style={{ color: colors.lightGray, fontSize: 13, marginBottom: 12 }}>
+                    Total: <strong style={{ color: colors.white }}>Rs {(medicine.price * (quantities[medicine.id] ?? 1)).toFixed(2)}</strong>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                    <button type="button" onClick={() => addToCart(medicine)} style={{ display: "inline-flex", alignItems: "center", gap: 6, color: colors.black, background: colors.emeraldGreen, border: "none", padding: "9px 12px", borderRadius: 6, fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
+                      <ShoppingCart size={15} /> {addedId === medicine.id ? "Added" : "Add to cart"}
+                    </button>
+                    <Link
+                      href={`/medicines/${medicine.id}/alternatives`}
+                      style={{ display: "inline-flex", alignItems: "center", gap: 6, color: colors.white, background: colors.brightBlue, padding: "9px 12px", borderRadius: 6, textDecoration: "none", fontSize: 12, fontWeight: 700 }}
+                    >
+                      View alternatives <ArrowRight size={15} />
+                    </Link>
+                  </div>
                 </div>
               </article>
             ))}
@@ -165,4 +200,19 @@ function StateCard({
       <p style={{ color: colors.lightGray }}>{text}</p>
     </div>
   );
+}
+
+function quantityButtonStyle(colors: { darkGray: string; lightGray: string }) {
+  return {
+    width: 26,
+    height: 26,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: `1px solid ${colors.darkGray}`,
+    borderRadius: 5,
+    background: "#101512",
+    color: colors.lightGray,
+    cursor: "pointer",
+  } as const;
 }

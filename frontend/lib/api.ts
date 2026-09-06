@@ -103,6 +103,46 @@ export interface HomeRemedyResponse {
   disclaimer: string;
 }
 
+// ─── Auth Types ───────────────────────────────────────────────────────────
+export interface UserProfile {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface UserProfileUpdate {
+  first_name: string;
+  last_name: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+}
+
+export interface SignUpPayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface AuthTokenResponse {
+  access_token: string;
+  token_type: string;
+  user: UserProfile;
+}
+
 // ─── Fetch helpers ────────────────────────────────────────────────────────
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
@@ -161,4 +201,35 @@ export const api = {
     formData.append("file", file);
     return apiFormFetch<PrescriptionRecognitionResponse>("/api/prescriptions/recognize", formData);
   },
+
+  // ─── Auth endpoints ─────────────────────────────────────────────────────
+  signup: (payload: SignUpPayload): Promise<AuthTokenResponse> =>
+    apiFetch<AuthTokenResponse>("/api/auth/signup", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  login: (payload: LoginPayload): Promise<AuthTokenResponse> =>
+    apiFetch<AuthTokenResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  getCurrentUser: (token: string): Promise<UserProfile> =>
+    apiFetch<UserProfile>("/api/auth/me", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+
+  updateCurrentUser: (token: string, payload: UserProfileUpdate): Promise<UserProfile> =>
+    apiFetch<UserProfile>("/api/auth/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    }),
 };

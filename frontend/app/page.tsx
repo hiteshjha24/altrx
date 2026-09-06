@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   type LucideIcon,
   ArrowRight,
@@ -37,9 +37,12 @@ import {
 import { Dela_Gothic_One } from "next/font/google";
 import Link from "next/link";
 import HomeRemedyChat from "@/components/HomeRemedyChat";
+import { readCart } from "@/lib/cart";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [userName, setUserName] = useState("");
+  const [cartCount, setCartCount] = useState(0);
 
   // Color Palette
   const colors = {
@@ -56,6 +59,19 @@ export default function Home() {
     darkCyan: "#196A9A",
     neonGreen: "#4CAA9A",
   };
+
+  useEffect(() => {
+    const storedUser = window.localStorage.getItem("user");
+    if (!storedUser) return;
+
+    try {
+      const user = JSON.parse(storedUser) as { first_name?: string; last_name?: string };
+      setUserName(`${user.first_name ?? ""} ${user.last_name ?? ""}`.trim());
+      setCartCount(readCart().reduce((total, item) => total + item.quantity, 0));
+    } catch {
+      window.localStorage.removeItem("user");
+    }
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,13 +142,39 @@ export default function Home() {
               <div>New Delhi</div>
             </div>
           </div>
-          <button style={{ background: "transparent", border: "none", color: colors.lightGray, cursor: "pointer", fontSize: 14 }}>
-            Login / Sign Up
-          </button>
-          <div style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+          {userName ? (
+            <Link
+              href="/profile"
+              title="Open your profile"
+              style={{ display: "flex", alignItems: "center", gap: 9, color: colors.white, textDecoration: "none" }}
+            >
+              <span
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "linear-gradient(135deg, #1998F4, #59C975)",
+                  color: colors.white,
+                  fontSize: 16,
+                  fontWeight: 800,
+                }}
+              >
+                {userName.charAt(0).toUpperCase()}
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 700 }}>{userName.split(" ")[0]}</span>
+            </Link>
+          ) : (
+            <Link href="/login" style={{ background: "transparent", border: "none", color: colors.lightGray, cursor: "pointer", fontSize: 14, textDecoration: "none" }}>
+              Login / Sign Up
+            </Link>
+          )}
+          <Link href="/cart" title="Open your cart" style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6, color: colors.lightGray, textDecoration: "none" }}>
             <ShoppingCart size={20} color={colors.lightGray} strokeWidth={2} />
-            <span>0</span>
-          </div>
+            <span>{cartCount}</span>
+          </Link>
         </div>
       </nav>
 

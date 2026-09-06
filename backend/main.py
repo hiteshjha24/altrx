@@ -14,7 +14,7 @@ load_dotenv("../.env.local")
 
 import asyncpg
 import httpx
-from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -37,6 +37,16 @@ try:
         validate_prescription_image,
     )
     from .search import fuzzy_search, log_search
+    from .auth import (
+        UserSignUp,
+        UserLogin,
+        UserProfileUpdate,
+        UserResponse,
+        TokenResponse,
+        hash_password,
+        verify_password,
+        create_access_token,
+    )
 except ImportError:  # pragma: no cover - allows running main.py directly
     from database import db
     from schemas import (
@@ -56,6 +66,16 @@ except ImportError:  # pragma: no cover - allows running main.py directly
         validate_prescription_image,
     )
     from search import fuzzy_search, log_search
+    from auth import (
+        UserSignUp,
+        UserLogin,
+        UserProfileUpdate,
+        UserResponse,
+        TokenResponse,
+        hash_password,
+        verify_password,
+        create_access_token,
+    )
 
 
 # ─────────────────────────────────────────────
@@ -90,6 +110,165 @@ app.add_middleware(
 @app.get("/health", tags=["System"])
 async def health_check():
     return {"status": "ok", "service": "AltRx API"}
+
+
+# ─────────────────────────────────────────────
+# AUTH ROUTES
+# ─────────────────────────────────────────────
+@app.post("/api/auth/signup", response_model=TokenResponse, tags=["Auth"], status_code=status.HTTP_201_CREATED)
+async def signup(payload: UserSignUp):
+    """Register a new user with email and password"""
+    # Check if user already exists
+    existing_user = await db.pool.fetchrow(
+        "SELECT id FROM users WHERE email = $1",
+        payload.email.lower()
+    )
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already registered"
+        )
+    
+    # Hash password
+    password_hash = hash_password(payload.password)
+    
+    # Insert user
+    user_row = await db.pool.fetchrow(
+        """
+        INSERT INTO users (email, first_name, last_name, password_hash, phone)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, email, first_name, last_name, phone, address, city, is_active, created_at
+        """,
+        payload.email.lower(),
+        payload.first_name,
+        payload.last_name,
+        password_hash,
+        payload.phone
+    )
+    
+    user = UserResponse(**dict(user_row))
+    access_token = create_access_token(user.id)
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user
+    )
+
+
+@app.post("/api/auth/login", response_model=TokenResponse, tags=["Auth"])
+async def login(payload: UserLogin):
+    """Login with email and password"""
+    # Fetch user
+    user_row = await db.pool.fetchrow(
+        "SELECT id, email, first_name, last_name, phone, address, city, is_active, created_at, password_hash FROM users WHERE email = $1",
+        payload.email.lower()
+    )
+    
+    if not user_row:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    user_dict = dict(user_row)
+    password_hash = user_dict.pop("password_hash")
+    
+    # Verify password
+    if not verify_password(payload.password, password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    # Check if user is active
+    if not user_dict.get("is_active"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is inactive"
+        )
+    
+    user = UserResponse(**user_dict)
+    access_token = create_access_token(user.id)
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user
+    )
+
+
+@app.get("/api/auth/me", response_model=UserResponse, tags=["Auth"])
+async def get_current_user(request: Request):
+    """Get current authenticated user profile"""
+    # Extract token from Authorization header
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid authorization header"
+        )
+    
+    token = auth_header[7:]  # Remove "Bearer " prefix
+    
+    # Verify token and get user_id
+    try:
+        from .auth import verify_token
+    except ImportError:
+        from auth import verify_token
+    
+    user_id = verify_token(token)
+    
+    # Fetch user
+    user_row = await db.pool.fetchrow(
+        "SELECT id, email, first_name, last_name, phone, address, city, is_active, created_at FROM users WHERE id = $1",
+        user_id
+    )
+    
+    if not user_row:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return UserResponse(**dict(user_row))
+
+
+@app.patch("/api/auth/me", response_model=UserResponse, tags=["Auth"])
+async def update_current_user(payload: UserProfileUpdate, request: Request):
+    """Update the editable fields of the authenticated user's profile."""
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid authorization header",
+        )
+
+    try:
+        from .auth import verify_token
+    except ImportError:
+        from auth import verify_token
+
+    user_id = verify_token(auth_header[7:])
+    user_row = await db.pool.fetchrow(
+        """
+        UPDATE users
+        SET first_name = $1, last_name = $2, phone = $3, address = $4, city = $5
+        WHERE id = $6
+        RETURNING id, email, first_name, last_name, phone, address, city, is_active, created_at
+        """,
+        payload.first_name.strip(),
+        payload.last_name.strip(),
+        payload.phone.strip() if payload.phone else None,
+        payload.address.strip() if payload.address else None,
+        payload.city.strip() if payload.city else None,
+        user_id,
+    )
+
+    if not user_row:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    return UserResponse(**dict(user_row))
 
 
 @app.post("/api/home-remedies/chat", response_model=HomeRemedyResponse, tags=["Health"])
