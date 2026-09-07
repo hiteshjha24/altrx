@@ -497,7 +497,7 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
             {[
               { stat: "50K+", label: "Happy Customers", color: colors.emeraldGreen },
-              { stat: "2500+", label: "Medicines Available", color: colors.brightBlue },
+              { stat: "800K+", label: "Medicines Available", color: colors.brightBlue },
               { stat: "1000+", label: "Verified Pharmacies", color: colors.aquaGreen },
               { stat: "₹50L+", label: "Savings Achieved", color: colors.neonGreen },
             ].map((item) => (

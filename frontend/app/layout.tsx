@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description:
     "Upload your prescription or search by brand name to find affordable generic alternatives with identical active ingredients.",
   keywords: ["generic medicines", "medicine alternatives", "cheap medicines", "Jan Aushadhi"],
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
